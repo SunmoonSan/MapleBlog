@@ -1,0 +1,108 @@
+{% load mytags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">#}
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+
+{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">#}
+
+</head>
+<body>
+{#{{ current_page.object_list }}#}
+
+<div class="container">
+    <nav class="nav-header row">
+    <a class="navbar-brand nav-header" href="#">枫叶林</a>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand nav-header" href="{% url 'blog:home' %}">首页</a>
+        <ul class="navbar-brand pl-lg-5 text-center">
+        <li class="ml-5">
+            <form role="search" class="form-inline my-2 my-lg-0" action="{% url 'haystack_search' %}" method="get">{% csrf_token %}
+                    <input name="q" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+        </li>
+    </ul>
+    </nav>
+</div>
+
+<div class="container">
+
+<div class="row">
+    <div class="col-md-10">
+        {% for article in current_page.object_list %}
+        <div class="card ">
+            <div class="card-body d-flex flex-column align-items-start">
+                <strong class="d-inline-block mb-2 text-primary">{{ article.articleType.tag }}</strong>
+                <h3 class="mb-0">
+                    <a class="text-dark" href="{% url 'blog:blog_detail' article.id %}">{{ article.title }}</a>
+                </h3>
+
+                <div class="mb-1 text-muted">{{ article.publish_time }}</div>
+                <p class="card-text mb-auto">{{ article.content | truncatechars:"70" }}</p>
+                <a href="{% url 'blog:blog_detail' article.id %}">Continue reading</a>
+
+            </div>
+            <div class="card-footer btn-light">
+                <a target="_blank" href="{% url 'blog:blog_detail' article.id %}">阅读
+                    <i class="iconfont ic-list-read"></i>&nbsp;{{ article.read_count }}</a>
+                <a target="_blank" href="{% url 'blog:blog_detail' article.id %}">评论
+                    <i class="iconfont ic-list-comments"></i>{{ article.comment_set.count }}</a>
+                <span ><i class="iconfont ic-list-like">喜欢</i>&nbsp;{{ article.articlelike_set.count }}</span>
+            </div>
+
+{#            <img class="card-img-right flex-auto d-none d-md-block" src="../../static/img/favicon.ico" width="160" height="160" alt="Card image cap">#}
+        </div><hr class="badge-secondary">
+        {% endfor %}
+    </div>
+
+</div>
+</div>
+
+<div class="container text-center">
+    <nav class="nav">
+
+      <ul class="pagination">
+      {% if current_page.has_previous %}
+        <li ><a href="?page={{ current_page.previous_page_number }}">上一页 <span class="sr-only">(current)</span></a></li>
+      {% endif %}
+
+{#      {% pagination current_page paginator 12 5 as page_list %}  <!-- 引用自定义标签，并传入参数 -->#}
+      {% pagination current_page paginator as page_list %}
+
+      {{ page_list|safe }}  <!--  显示 -->
+
+      {% if current_page.has_next %}
+        <li><a href="?page={{ current_page.next_page_number }}">下一页 <span class="sr-only">(current)</span></a></li>
+      {% endif %}
+      </ul>
+
+ </nav>
+</div>
+
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.pagination li a').each(function(){
+
+           if ( $(this).html() === {{ current_page.number }} ){
+               $(this).parent().addClass('active')
+           }
+        });
+
+    })
+</script>
+</body>
+</html>

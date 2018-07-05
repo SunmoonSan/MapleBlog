@@ -1,0 +1,90 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<h3 class="text-center m-4 text-success">个人信息</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+        <img class="img-thumbnail mr-auto" width="120" height="120" src="{{ account.avatar }}" style="margin-left: 420px;margin-right: 20px; border-radius: 100px">
+        </div>
+        <div class="col-md-6">
+            <button id="btnUpdateAvatar" class="btn btn-outline-danger btn-md mt-5" style="border-radius: 20px">更换头像</button>
+        </div>
+
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 text-info text-lg-right mt-2">
+            昵称
+        </div>
+        <div class="col-md-6 mt-1">
+            <label for="nicknameInput"></label>
+            <input id="nicknameInput" name="nickname" class="btn-outline-primary" type="text" value="{{ account.nickname }}">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 text-info text-lg-right mt-2">
+            手机
+        </div>
+        <div class="col-md-6 mt-1">
+            <label for="phoneInput"></label>
+            <input id="phoneInput" name="phone" class="btn-outline-secondary" type="text" value="{{ account.phone }}">
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6 text-info text-lg-right mt-2">
+            个人介绍
+        </div>
+        <div class="col-md-6 mt-1">
+            <label for="descInput"></label>
+            <textarea name="descInput" id="descInput"  class="btn-outline-success" rows="3" cols="30">{{ account.intro }}</textarea>
+        </div>
+    </div>
+    <div class="col-md-6 mt-4 mr-4 text-right">
+        <input id="saveInput" type="submit" class="btn btn-outline-success btn-lg" value="保存">
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+<script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#saveInput").click(function () {
+            let nickname = $("#nicknameInput").val();
+            let phone = $("#phoneInput").val();
+            let desc = $("#descInput").val();
+
+            $.ajax({
+              url: "{% url 'blog:profile' %}",
+              type: "POST",
+              data: {
+                  'nickname': nickname,
+                  'phone': phone,
+                  'desc': desc,
+              },
+           });
+        });
+
+        $("#btnUpdateAvatar").click(function () {
+            layer.open({
+                title:"上传头像",
+                area: ['900px', '600px'],
+                type:2,
+                content:"{% url 'blog:imagecrop' %}",
+            });
+        });
+    });
+</script>
+</body>
+</html>

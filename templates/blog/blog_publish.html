@@ -1,0 +1,70 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../static/img/favicon.ico">
+
+    <title>写博客</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'editor/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'editor/css/editormd.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../../static/css/signin.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+    <div class="col-md-12 mt-lg-5 pt-lg-5">
+        <h3 class="text-lg-center text-info">写博客</h3>
+    </div>
+    <form action="." method="post">{% csrf_token %}
+        <div class="form-group col-md-6">
+            <label for="input_title"></label>
+            <input name="title" type="text" class="form-control" id="input_title" placeholder="标题">
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="input_type"></label>
+            <input name="tag" type="text" class="form-control" id="input_type" placeholder="类型">
+        </div>
+
+        <div class="form-group col-md-12">
+            <div id="editormd" class="col-md-12 text-left">
+                <label for="id_body">博客内容</label>
+                <textarea name="content" id="id_body"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group col-md-12 text-lg-right">
+            <input class="btn btn-success btn-lg" type="submit" value="保存">
+        </div>
+    </form>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static "editor/editormd.min.js" %}"></script>
+<script type="text/javascript">
+    var editor = editormd("editormd", {
+        width: "100%",
+        height: 450,
+        syncScrolling: "single",
+        path: "{% static 'editor/lib/' %}"
+    });
+</script>
+</body>
+
+</html>
+
+
+

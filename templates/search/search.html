@@ -1,0 +1,209 @@
+{% load staticfiles %}
+{% load highlight %}
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../static/img/favicon.ico">
+
+    <title>首页</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+    <style>
+        span.highlighted {
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <nav class="nav-header">
+    <a class="navbar-brand nav-header" href="#">枫叶林</a>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand nav-header" href="#">首页</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active pr-lg-4">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+            </li>
+            <li class="ml-5">
+                <form role="search" class="form-inline my-2 my-lg-0" action="{% url 'haystack_search' %}" method="get">{% csrf_token %}
+                    <input name="q" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </li>
+        </ul>
+
+        {% if is_login %}
+            <a class="btn-link mr-1" href="{% url 'blog:profile' %}"><img class="img-thumbnail" width="60" height="60" src="{{ user.avatar }}" style="margin-left: 200px; border-radius: 80px"></a>
+            <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'blog:profile' %}">个人信息</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'blog:blog_logout' %}">退出</a>
+                </div>
+            </div>
+            <a class="btn btn-danger btn-lg" style="border-radius: 100px;color: white" href="{% url 'blog:blog_publish' %}">写文章</a>
+            {% else %}
+            <ul class="navbar-nav">
+            <li class="nav-item">
+            <a class="nav-link text-info" href="{% url 'blog:blog_login' %}">登录</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link  text-info" href="{% url 'blog:register' %}">注册</a>
+            </li>
+        </ul>
+        {% endif %}
+
+    </div>
+</nav>
+</div>
+
+<div class="container">
+    <hr style="background-color: #1E9FFF">
+</div>
+
+<div class="container">
+
+</div>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-8">
+    {% if query %}
+        {% for article in page.object_list %}
+        <div class="card ">
+            <div class="card-body d-flex flex-column align-items-start">
+                <strong class="d-inline-block mb-2 text-primary">{{ article.object.articleType.tag }}</strong>
+                <h3 class="mb-0">
+                    <a class="text-dark" href="{% url 'blog:blog_detail' article.object.id %}">{% highlight article.object.title with query %}</a>
+                </h3>
+
+                <div class="mb-1 text-muted">{{ article.object.publish_time }}</div>
+                <p class="card-text mb-auto">{% highlight article.object.content with query | truncatechars:"70" %}</p>
+                <a href="{% url 'blog:blog_detail' article.object.id %}">Continue reading</a>
+
+            </div>
+            <div class="card-footer btn-light">
+                <a target="_blank" href="{% url 'blog:blog_detail' article.object.id %}">阅读
+                    <i class="iconfont ic-list-read"></i>&nbsp;{{ article.object.read_count }}</a>
+                <a target="_blank" href="/p/f9af3e0659bb#comments">评论
+                    <i class="iconfont ic-list-comments"></i>{{ article.object.comment_set.count }}</a>
+                <span ><i class="iconfont ic-list-like">喜欢</i>&nbsp;{{ article.object.articlelike_set.count }}</span>
+            </div>
+
+{#            <img class="card-img-right flex-auto d-none d-md-block" src="../../static/img/favicon.ico" width="160" height="160" alt="Card image cap">#}
+        </div><hr class="badge-secondary">
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+    {% else %}
+        请输入搜索关键词，例如 django
+    {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <b>个人介绍</b>
+        <button id="btnEdit" class="btn btn-light" style="margin-left: 120px"><i class="material-icons">create</i>编辑</button>
+        <br>
+        <i id="descText">{{ user.intro }}</i>
+        <label for="descInput"></label>
+        <textarea name="descInput" id="descInput" style="display: none" rows="3" cols="30">{{ account.intro }}</textarea>
+        <br><br>
+        <button id="btnOK" style="display: none;border-radius: 16px" class="btn btn-outline-success">保存</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="btnCancel" style="display: none" class="btn btn-light">取消</button>
+        <hr>
+
+        {% for type in types %}
+            <div><a href="#" class="btn-link"><b class="icon-lemon text-success pl-3">&nbsp;&nbsp;&nbsp;&nbsp;{{ forloop.counter }}</b>&nbsp;{{ type.tag }}</a><i class=" ml-auto" style="background-color: #17a2b8;color: white;float: right;width: 40px; height: 20px;text-align: center;border-radius: 5px">{{ type.count }}</i></div>
+        {% endfor %}
+
+    </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnEdit").click(function () {
+            $("#descText").hide();
+            $("#descInput").text('{{ user.intro }}').show();
+            $("#btnOK").show();
+            $("#btnCancel").show();
+        });
+
+        $("#btnOK").click(function () {
+            alert("OK");
+            $.ajax({
+                url: "{% url 'blog:home_modify_intro' %}",
+                type: "POST",
+                data: {
+                    'desc': $("#descInput").val(),
+                },
+                success: function (e) {
+                    if (e === "1") {
+                        parent.location.reload();
+                    } else {
+
+                    }
+                }
+            });
+        });
+
+        $("#btnCancel").click(function () {
+            $("#descText").show();
+            $("#descInput").hide();
+            $("#btnOK").hide();
+            $("#btnCancel").hide();
+        })
+    });
+</script>
+</body>
+
+{#----------------------------#}
+
+{% comment %}
+{% if query %}
+        <h3>Results</h3>
+
+        {% for result in page.object_list %}
+            <p>
+                <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
+            </p>
+        {% empty %}
+            <p>No results found.</p>
+        {% endfor %}
+
+        {% if page.has_previous or page.has_next %}
+            <div>
+                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                |
+                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+
+    {% endif %}
+{% endcomment %}

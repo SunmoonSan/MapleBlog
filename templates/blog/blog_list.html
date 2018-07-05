@@ -1,0 +1,119 @@
+{% comment %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../static/img/favicon.ico">
+
+    <title>Signin Sunmoon's blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+
+</head>
+
+<body>
+
+<div class="container">
+    <div class="row">
+      <div class="col-sm-8 text-left">
+        {% for article in articles %}
+        <div class="col-md-11 ver">
+        <div class="card ">
+            <div class="card-body d-flex flex-column align-items-start">
+                <strong class="d-inline-block mb-2 text-primary">World</strong>
+                <h3 class="mb-0">
+                    <a class="text-dark" href="{% url 'blog:blog_detail' article.id %}">{{ article.title }}</a>
+                </h3>
+                <div class="mb-1 text-muted">{{ article.publish_time }}</div>
+                <p class="card-text mb-auto">{{ article.content | truncatechars:"70" }}</p>
+                <a href="{% url 'blog:blog_detail' article.id %}">Continue reading</a>
+
+
+
+            </div>
+            <div class="card-footer btn-light">
+                <a target="_blank" href="/p/f9af3e0659bb">阅读
+                    <i class="iconfont ic-list-read"></i> 852</a>
+                <a target="_blank" href="/p/f9af3e0659bb#comments">评论
+                    <i class="iconfont ic-list-comments"></i> 131</a>
+                <span><i class="iconfont ic-list-like">喜欢</i> 117</span>
+                <span><i class="iconfont ic-list-money"></i> 9</span>
+            </div>
+
+{#            <img class="card-img-right flex-auto d-none d-md-block" src="../../static/img/favicon.ico" width="160" height="160" alt="Card image cap">#}
+        </div>
+
+        </div>
+        {% endfor %}
+      </div>
+      <div class="col-sm-4">
+        <div class="search-bar">
+          <input type="search" class="form-control" placeholder="搜一下">
+        </div>
+        <div class="side-bar-card flag clearfix">
+          <div class="col-xs-5">
+            <img src="img/1-1.png">
+          </div>
+        </div>
+        <div class="side-bar-card">
+          <div class="card-title">24小时热闻</div>
+          <div class="card-body">
+            <div class="list">
+              <h4 class="font-italic">Archives</h4>
+            <ol class="list-unstyled mb-0">
+              <li><a href="#">March 2014</a></li>
+              <li><a href="#">February 2014</a></li>
+              <li><a href="#">January 2014</a></li>
+              <li><a href="#">December 2013</a></li>
+              <li><a href="#">November 2013</a></li>
+              <li><a href="#">October 2013</a></li>
+              <li><a href="#">September 2013</a></li>
+              <li><a href="#">August 2013</a></li>
+              <li><a href="#">July 2013</a></li>
+              <li><a href="#">June 2013</a></li>
+              <li><a href="#">May 2013</a></li>
+              <li><a href="#">April 2013</a></li>
+            </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</body>
+
+</html>{% endcomment %}
+{% if is_paginated %}
+<div class="pagination">
+  {% if first %}
+    <a href="?page=1">1</a>
+  {% endif %}
+  {% if left %}
+    {% if left_has_more %}
+        <span>...</span>
+    {% endif %}
+    {% for i in left %}
+        <a href="?page={{ i }}">{{ i }}</a>
+    {% endfor %}
+  {% endif %}
+  <a href="?page={{ page_obj.number }}" style="color: red">{{ page_obj.number }}</a>
+  {% if right %}
+    {% for i in right %}
+        <a href="?page={{ i }}">{{ i }}</a>
+    {% endfor %}
+    {% if right_has_more %}
+        <span>...</span>
+    {% endif %}
+  {% endif %}
+  {% if last %}
+    <a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+  {% endif %}
+</div>
+{% endif %}
